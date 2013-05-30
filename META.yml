@@ -1,0 +1,22 @@
+---
+abstract: 'Compile .scss files using libsass'
+author:
+  - 'David Caldwell <david@porkrind.org>'
+build_requires:
+  ExtUtils::CBuilder: 0
+  Test::More: 0
+configure_requires:
+  Module::Build: 0
+generated_by: 'Module::Build version 0.3603'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Text-Sass-XS
+provides:
+  Text::Sass::XS:
+    file: lib/Text/Sass/XS.pm
+    version: v0.1.0
+resources:
+  license: http://dev.perl.org/licenses/
+version: v0.1.0
