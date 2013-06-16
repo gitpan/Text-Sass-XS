@@ -1,234 +1,192 @@
-# Copyright © 2013 David Caldwell.
-#
-# This library is free software; you can redistribute it and/or modify
-# it under the same terms as Perl itself, either Perl version 5.12.4 or,
-# at your option, any later version of Perl 5 you may have available.
-
 package Text::Sass::XS;
-
+use 5.008005;
 use strict;
 use warnings;
-use Carp;
+use base 'Exporter';
 
-require Exporter;
+our $VERSION = "0.02";
 
-our @ISA = qw(Exporter);
-our @EXPORT_OK = qw( sass_compile );
-our @EXPORT = qw(
-	SASS_STYLE_NESTED
-	SASS_STYLE_COMPRESSED
+my @constants = qw(
+    SASS_STYLE_NESTED
+    SASS_STYLE_EXPANDED
+    SASS_STYLE_COMPACT
+    SASS_STYLE_COMPRESSED
+    SASS_SOURCE_COMMENTS_NONE
+    SASS_SOURCE_COMMENTS_DEFAULT
+    SASS_SOURCE_COMMENTS_MAP
+);
+my @functions = qw(
+    sass_compile
+    sass_compile_file
+);
+our @EXPORT_OK = ( @constants, @functions );
+our %EXPORT_TAGS = (
+    'all'   => [ @constants, @functions ],
+    'const' => \@constants,
+    'func'  => \@functions
 );
 
-our $VERSION = '0.1.0'; # Always keep the rightmost digit, even if it's zero (stupid perl).
+use XSLoader;
+XSLoader::load( __PACKAGE__, $VERSION );
 
-require XSLoader;
-XSLoader::load('Text::Sass::XS', $VERSION);
-
-sub new {
-    my ($class, %options) = @_;
-    bless { options=>\%options }, $class;
-};
-
-sub options {
-    shift->{options}
-}
-
-sub last_error {
-    my ($self) = @_;
-    $self->{last_error}
-}
-
-sub sass_compile {
-    my ($sass_code, %options) = @_;
-    my $r = compile_sass($sass_code, { %options,
-                                       # Override include_paths with a ':' separated list
-                                       !$options{include_paths} ? ()
-                                                                : (include_paths => join(':', @{$options{include_paths}})),
-                                     });
-    wantarray ? ($r->{output_string}, $r->{error_message}) : $r->{output_string}
-}
-
-sub compile {
-    my ($self, $sass_code) = @_;
-    my $compiled;
-    ($compiled, $self->{last_error}) = sass_compile($sass_code, %{$self->options});
-    croak $self->{last_error} if $self->{last_error} && !$self->options->{dont_die};
-    $compiled
-}
+sub sass_compile      { Text::Sass::XS::compile(@_) }
+sub sass_compile_file { Text::Sass::XS::compile_file(@_) }
 
 1;
 __END__
 
+=encoding utf-8
+
 =head1 NAME
 
-Text::Sass::XS - Compile .scss files using libsass
+Text::Sass::XS - Perl Binding for libsass
 
 =head1 SYNOPSIS
 
-  # Object Oriented API
-  use Text::Sass::XS;
+    # export sass_compile, sass_compile_file and some constants
+    use Text::Sass::XS ':all';
+    use Try::Tiny;
 
-  my $sass = Text::Sass::XS->new;
-  my $css = $sass->compile(".something { color: red; }");
+    my $sass = "your sass string here...";
+    my $options = {
+        output_style    => SASS_STYLE_COMPRESSED,
+        source_comments => SASS_SOURCE_COMMENTS_NONE,
+        include_paths   => 'site/css:vendor/css',
+        image_path      => '/images'
+    };
+    try {
+        my $css = sass_compile($sass, $options);
+        print $css;
+    }
+    catch {
+        warn $_;
+    };
 
-
-  # Object Oriented API w/ options
-  my $sass = Text::Sass::XS->new(include_paths   => ['some/include/path'],
-                                 image_path      => 'base_url',
-                                 output_style    => SASS_STYLE_COMPRESSED,
-                                 source_comments => 1,
-                                 dont_die        => 1);
-  my $css = $sass->compile(".something { color: red; }");
-  if (!defined $css) { # $css can be undef because 'dont_die' was set
-    warn $sass->last_error;
-  }
-
-
-
-  # Functional API
-  use Text::Sass::XS qw(:Default sass_compile);
-
-  my ($css, $err) = sass_compile(".something { color: red; }");
-  die $err if defined $err;
-
-
-  # Functional API, simple, with no error messages
-  my $css = sass_compile(".something { color: red; }");
-  die unless defined $css;
-
-
-  # Functional API w/ options
-  my ($css, $err) = sass_compile(".something { color: red; }",
-                                 include_paths => ['some/include/path'],
-                                 image_path    => 'base_url',
-                                 output_style  => SASS_STYLE_NESTED,
-                                 source_comments => 1);
+    my $sass_filename = "/path/to/foo.scss";
+    my $options = {
+        output_style    => SASS_STYLE_COMPRESSED,
+        source_comments => SASS_SOURCE_COMMENTS_NONE,
+        include_paths   => 'site/css:vendor/css',
+        image_path      => '/images'
+    };
+    try {
+        my $css = sass_compile_file($sass_filename, $options);
+        print $css;
+    }
+    catch {
+        warn $_;
+    };
 
 
 =head1 DESCRIPTION
 
-Text::Sass::XS provides a perl interface to libsass, a fairly complete Sass
-compiler written in C. Despite its name, Text::Sass::XS can only compile the
-newer ".scss" files.
+Text::Sass::XS is a Perl Binding for libsass.
 
-=head1 OBJECT ORIENTED INTERFACE
+L<libsass Project page|https://github.com/hcatlin/libsass>
+
+L<CSS::Sass> is also using libsass. But CSS::Sass v0.1.0 and v0.2.0 are both broken.
+
+=head1 EXPORT
+
+None.
+
+=head1 EXPORT_OK
+
+=head2 Funcitons
 
 =over 4
 
-=item C<new>
+=item sass_compile($source_string :Str, $options :HashRef)
 
-  $sass = Text::Sass::XS->new(options)
+Returns css string if success. Otherwise throws exception.
 
-Creates a Sass object with the specified options. Example:
+Default value of C<$options> is below.
 
-  $sass = Text::Sass::XS->new; # no options
-  $sass = Text::Sass::XS->new(output_style => SASS_STYLE_NESTED);
+    my $options = {
+        output_style    => SASS_STYLE_COMPRESSED,
+        source_comments => SASS_SOURCE_COMMENTS_NONE, 
+        include_paths   => undef,
+        image_path      => undef,
+    };
 
-=item C<compile(source_code)>
+C<input_paths> is a coron-separated string for "@import". C<image_path> is a string using for "image-url".
 
-  $css = $sass->compile("source code");
+=item sass_compile_file($input_path :Str, $options :HashRef)
 
-This compiles the Sass string that is passed in the first parameter. If
-there is an error it will C<croak()>, unless the C<dont_die> option has been
-set. In that case, it will return C<undef>.
-
-=item C<last_error>
-
-  $sass->last_error
-
-Returns the error encountered by the most recent invocation of
-C<compile>. This is really only useful if the C<dont_die> option is set.
-
-C<libsass> error messages are in the form ":$line:$column $error_message" so
-you can append them to the filename for a standard looking error message.
-
-=item C<options>
-
-  $sass->options->{dont_die} = 1;
-
-Allows you to inspect or change the options after a call to C<new>.
+Returns css string if success. Otherwise throws exception. C<$options> is same as C<sass_compile>.
 
 =back
 
-=head1 FUNCTIONAL INTERFACE
+=head2 Constants
+
+For C<$options-E<gt>{output_style}>.
 
 =over 4
 
-=item C<($css, $err) = sass_compile(source_code, options)>
+=item SASS_STYLE_NESTED
 
-=item C<$css = sass_compile(source_code, options)>
+=item SASS_STYLE_EXPANDED
 
-This compiles the Sass string that is passed in the first parameter. It
-returns both the CSS and the error in list context and just the CSS in
-scalar context. One of the returned values will always be C<undef>, but
-never both.
+=item SASS_STYLE_COMPACT
+
+=item SASS_STYLE_COMPRESSED
 
 =back
 
-=head1 OPTIONS
+For C<$options-E<gt>{source_comments}>.
 
 =over 4
 
-=item C<output_style>
+=item SASS_SOURCE_COMMENTS_NONE
 
-=over 4
+=item SASS_SOURCE_COMMENTS_DEFAULT
 
-=item C<SASS_STYLE_NESTED>
-
-=item C<SASS_STYLE_COMPRESSED>
+=item SASS_SOURCE_COMMENTS_MAP
 
 =back
 
-The default is C<SASS_STYLE_NESTED>. Set to C<SASS_STYLE_COMPRESSED> to
-eliminate all whitespace (for your production CSS).
+=head1 EXPORT_TAGS
 
-=item C<source_comments>
+=over 4
 
-Set to C<0> (the default) and no extra comments are output. Set to C<1> and
-comments are output indicating what input line the code corresponds to.
+=item :func
 
-=item C<include_paths>
+Exports sass_compile and sass_compile_file.
 
-This is an arrayref that holds the list a of paths to search (in addition to
-the current directory) when following Sass C<@import> directives.
+=item :const
 
-=item C<image_path>
+Exports all constants.
 
-This is a string that holds the base URL. This is only used in the
-(non-standard) C<image-url()> Sass function. For example, if C<image_path>
-is set to C<'file:///tmp/a/b/c'>, then the follwoing Sass code:
+=item :all
 
-  .something { background-image: image-url("my/path"); }
-
-...will compile to this:
-
-  .something { background-image: url("file:///tmp/a/b/c/my/path"); }
-
-=item C<dont_die>
-
-This is only valid when used with the L<Object Oriented Interface|/"OBJECT ORIENTED INTERFACE">. It is
-described in detail there.
+Exports :func and :const.
 
 =back
 
 =head1 SEE ALSO
 
-L<The Sass Home Page|http://sass-lang.com/>
+L<Text::Sass>
 
-L<The libsass Home Page|https://github.com/hcatlin/libsass>
+L<CSS::Sass>
 
-L<The Text::Sass::XS Home Page|https://github.com/caldwell/Text-Sass-XS>
+=head1 LICENSE
+
+=head2 Text::Sass::XS
+
+Copyright (C) 2013 Yoshihiro Sasaki.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=head2 libsass
+
+Copyright (C) 2012 by Hampton Catlin.
+
+See libsass/LICENSE for more details.
 
 =head1 AUTHOR
 
-David Caldwell E<lt>david@porkrind.orgE<gt>
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright (C) 2013 by David Caldwell
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.12.4 or,
-at your option, any later version of Perl 5 you may have available.
+Yoshihiro Sasaki E<lt>ysasaki@cpan.orgE<gt>
 
 =cut
+

@@ -26,6 +26,7 @@ struct sass_context {
   struct sass_options options;
   int error_status;
   char* error_message;
+  struct Sass_C_Function_Data* c_functions;
 };
 
 struct sass_file_context {
@@ -34,6 +35,7 @@ struct sass_file_context {
   struct sass_options options;
   int error_status;
   char* error_message;
+  struct Sass_C_Function_Data* c_functions;
 };
 
 struct sass_folder_context {
@@ -42,6 +44,7 @@ struct sass_folder_context {
   struct sass_options options;
   int error_status;
   char* error_message;
+  struct Sass_C_Function_Data* c_functions;
 };
 
 struct sass_context*        sass_new_context        (void);

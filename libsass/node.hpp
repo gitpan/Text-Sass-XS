@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 
+union Sass_Value;
 namespace Sass {
   using namespace std;
 
@@ -255,6 +256,7 @@ namespace Sass {
     void emit_expanded_css(stringstream& buf, const string& prefix);
     void emit_compressed_css(stringstream& buf);
 
+    Sass_Value to_c_val();
   };
 
   // The actual implementation object for Nodes; Node handles point at these.
@@ -525,5 +527,4 @@ namespace Sass {
   inline double Node::numeric_value() const { return ip_->numeric_value(); }
   inline Token  Node::token() const         { return ip_->value.token; }
   inline Token  Node::unit() const          { return ip_->unit(); }
-
 }
