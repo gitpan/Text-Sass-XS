@@ -26,17 +26,18 @@ no_index:
     - eg
     - builder
     - libsass
+    - author_scripts
 provides:
   Text::Sass::XS:
     file: lib/Text/Sass/XS.pm
-    version: 0.05
+    version: 0.06
 requires:
   perl: 5.008005
 resources:
   bugtracker: https://github.com/ysasaki/Text-Sass-XS/issues
   homepage: https://github.com/ysasaki/Text-Sass-XS
   repository: git://github.com/ysasaki/Text-Sass-XS.git
-version: 0.05
+version: 0.06
 x_contributors:
   - 'ysasaki <ysasaki@cpan.org>'
   - 'ysasaki <aloelight@gmail.com>'

@@ -3,6 +3,7 @@ Changes
 LICENSE
 META.json
 README.md
+author_scripts/leaktrace.t
 builder/MyBuilder.pm
 cpanfile
 lib/Text/Sass/XS.pm
@@ -15,10 +16,10 @@ t/02_func.t
 t/03_compile.t
 t/04_compile_file.t
 t/05_oop_interface.t
+t/06_text_sass_interface.t
 t/another-assets/green.scss
 t/assets/foo.scss
 t/assets/red.scss
-xt/leaktrace.t
 libsass/AUTHORS
 libsass/COPYING
 libsass/ChangeLog
