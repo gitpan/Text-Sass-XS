@@ -14,6 +14,7 @@ t/01_const.t
 t/02_func.t
 t/03_compile.t
 t/04_compile_file.t
+t/05_oop_interface.t
 t/another-assets/green.scss
 t/assets/foo.scss
 t/assets/red.scss

@@ -27,6 +27,7 @@
          "requires" : {
             "CPAN::Meta" : "0",
             "CPAN::Meta::Prereqs" : "0",
+            "ExtUtils::CBuilder" : "0.28",
             "Module::Build" : "0.38"
          }
       },
@@ -53,7 +54,7 @@
    "provides" : {
       "Text::Sass::XS" : {
          "file" : "lib/Text/Sass/XS.pm",
-         "version" : "0.02"
+         "version" : "0.04"
       }
    },
    "release_status" : "stable",
@@ -67,7 +68,7 @@
          "web" : "https://github.com/ysasaki/Text-Sass-XS"
       }
    },
-   "version" : "0.02",
+   "version" : "0.04",
    "x_contributors" : [
       "ysasaki <ysasaki@cpan.org>",
       "ysasaki <aloelight@gmail.com>"
