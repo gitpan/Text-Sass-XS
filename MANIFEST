@@ -18,6 +18,7 @@ t/05_oop_interface.t
 t/another-assets/green.scss
 t/assets/foo.scss
 t/assets/red.scss
+xt/leaktrace.t
 libsass/AUTHORS
 libsass/COPYING
 libsass/ChangeLog
