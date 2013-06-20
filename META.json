@@ -24,11 +24,17 @@
       ]
    },
    "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Devel::PPPort" : "3.20",
+            "ExtUtils::CBuilder" : "0.28"
+         }
+      },
       "configure" : {
          "requires" : {
             "CPAN::Meta" : "0",
             "CPAN::Meta::Prereqs" : "0",
-            "ExtUtils::CBuilder" : "0.28",
+            "Devel::PPPort" : "3.20",
             "Module::Build" : "0.38"
          }
       },
@@ -56,7 +62,7 @@
    "provides" : {
       "Text::Sass::XS" : {
          "file" : "lib/Text/Sass/XS.pm",
-         "version" : "0.08"
+         "version" : "0.09"
       }
    },
    "release_status" : "stable",
@@ -70,7 +76,7 @@
          "web" : "https://github.com/ysasaki/Text-Sass-XS"
       }
    },
-   "version" : "0.08",
+   "version" : "0.09",
    "x_contributors" : [
       "ysasaki <ysasaki@cpan.org>",
       "ysasaki <aloelight@gmail.com>"

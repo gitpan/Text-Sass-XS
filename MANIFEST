@@ -3,12 +3,12 @@ Changes
 LICENSE
 META.json
 README.md
+author_scripts/check-xs.t
 author_scripts/leaktrace.t
 builder/MyBuilder.pm
 cpanfile
 lib/Text/Sass/XS.pm
 lib/Text/Sass/XS.xs
-lib/Text/Sass/ppport.h
 minil.toml
 t/00_compile.t
 t/01_const.t
