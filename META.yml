@@ -32,14 +32,14 @@ no_index:
 provides:
   Text::Sass::XS:
     file: lib/Text/Sass/XS.pm
-    version: 0.09
+    version: 0.10
 requires:
   perl: 5.008005
 resources:
   bugtracker: https://github.com/ysasaki/Text-Sass-XS/issues
   homepage: https://github.com/ysasaki/Text-Sass-XS
   repository: git://github.com/ysasaki/Text-Sass-XS.git
-version: 0.09
+version: 0.10
 x_contributors:
   - 'ysasaki <ysasaki@cpan.org>'
   - 'ysasaki <aloelight@gmail.com>'

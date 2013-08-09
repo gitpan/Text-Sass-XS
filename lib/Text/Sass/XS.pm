@@ -5,7 +5,7 @@ use warnings;
 use base 'Exporter';
 use Carp ();
 
-our $VERSION = "0.09";
+our $VERSION = "0.10";
 
 my @constants = qw(
     SASS_STYLE_NESTED
@@ -72,6 +72,11 @@ sub _normalize_options {
     {
         $options{include_paths} = join ':', @{ $options{include_paths} };
     }
+    else {
+        $options{include_paths} = "";
+    }
+
+    $options{image_path} = "" unless $options{image_path};
 
     return %options;
 }
